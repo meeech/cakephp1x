@@ -355,9 +355,6 @@ class JavascriptTest extends CakeTestCase {
 
 		if (ini_get('precision') >= 12) {
 			$number = 3.141592653589;
-			if (!$this->Javascript->useNative) {
-				$number = sprintf("%.11f", $number);
-			}
 
 			$result = $this->Javascript->object(array('Object' => array(true, false, 1, '02101', 0, -1, 3.141592653589, "1")));
 			$expected = '{"Object":[true,false,1,"02101",0,-1,' . $number . ',"1"]}';
@@ -417,8 +414,8 @@ class JavascriptTest extends CakeTestCase {
 			)
 		);
 
-		$expected = '{"Object":{"key1":val1,"key2":"val2","key3":val3}}';
-		$result = $this->Javascript->object($object, array('quoteKeys' => false, 'stringKeys' => array('key1', 'key3')));
+		$expected = '{"Object":{"key1":"val1","key2":"val2","key3":"val3"}}';
+		$result = $this->Javascript->object($object);
 		$this->assertEqual($result, $expected);
 
 		$this->Javascript->useNative = $oldNative;

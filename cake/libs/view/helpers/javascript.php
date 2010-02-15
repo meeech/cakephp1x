@@ -262,7 +262,7 @@ class JavascriptHelper extends AppHelper {
 			} else {
 				$url = $this->webroot($url);
 			}
-			
+
 			if (Configure::read('Asset.filter.js')) {
 				$pos = strpos($url, JS_URL);
 				if ($pos !== false) {
@@ -615,43 +615,9 @@ class JavascriptHelper extends AppHelper {
 		if ($this->useNative) {
 			$rt = json_encode($data);
 		} else {
-			if (is_null($data)) {
-				return 'null';
-			}
-			if (is_bool($data)) {
-				return $data ? 'true' : 'false';
-			}
-
-			if (is_array($data)) {
-				$keys = array_keys($data);
-			}
-
-			if (!empty($keys)) {
-				$numeric = (array_values($keys) === array_keys(array_values($keys)));
-			}
-
-			foreach ($data as $key => $val) {
-				if (is_array($val) || is_object($val)) {
-					$val = $this->object($val, array_merge($options, array('block' => false)));
-				} else {
-					$quoteStrings = (
-						!count($options['stringKeys']) ||
-						($options['quoteKeys'] && in_array($key, $options['stringKeys'], true)) ||
-						(!$options['quoteKeys'] && !in_array($key, $options['stringKeys'], true))
-					);
-					$val = $this->value($val, $quoteStrings);
-				}
-				if (!$numeric) {
-					$val = $options['q'] . $this->value($key, false) . $options['q'] . ':' . $val;
-				}
-				$out[] = $val;
-			}
-
-			if (!$numeric) {
-				$rt = '{' . implode(',', $out) . '}';
-			} else {
-				$rt = '[' . implode(',', $out) . ']';
-			}
+            App::import('Vendor', 'Services_JSON', array('file'=>'JSON/JSON.php'));
+            $json = new Services_JSON();
+            $rt = $json->encode($data);
 		}
 		$rt = $options['prefix'] . $rt . $options['postfix'];
 
